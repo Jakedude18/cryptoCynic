@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CryptoCynic - Transaction Tracker</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Internal CSS example */
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #222; color: #fff; }
+    tr:hover { background-color: #f5f5f5; }
+    form { margin-top: 20px; }
+    input[type="text"] { padding: 8px; width: 60%; margin-right: 10px; }
+    button { padding: 8px 12px; background-color: #222; color: #fff; border: none; cursor: pointer; }
+    button:hover { background-color: #555; }
+  </style>
+</head>
+<body>
+
+  <header class="fixed-header">
+    <div class="logo">CryptoCynic</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="transaction.html">View Transactions</a>
+      <a href="about.html">About</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Transaction Tracker</h1>
+    <p>Enter a Bitcoin transaction hash to see its status in the mempool.</p>
+
+    <form action="#" method="GET">
+      <label for="txid">Transaction ID:</label>
+      <input type="text" id="txid" name="txid" placeholder="Enter Transaction Hash" required>
+      <button type="submit">Track Transaction</button>
+    </form>
+
+    <!-- Placeholder Table -->
+    <table>
+      <tr><th>Feature</th><th>Value</th></tr>
+      <tr><td>Status</td><td>Pending / Confirmed</td></tr>
+      <tr><td>Transaction Fee</td><td>--</td></tr>
+      <tr><td>Transaction Size</td><td>--</td></tr>
+      <tr><td>Time in Mempool</td><td>--</td></tr>
+      <tr><td>Approx. Mempool Rank</td><td>--</td></tr>
+      <tr><td>Estimated Confirmation</td><td>--</td></tr>
+      <tr><td>Block Inclusion</td><td>--</td></tr>
+      <tr><td>Number of Confirmations</td><td>--</td></tr>
+    </table>
+
+  </main>
+
+  <footer class="fixed-footer">
+    <p>&copy; 2026 CryptoCynic | <a href="about.html">About</a></p>
+  </footer>
+
+</body>
+</html>

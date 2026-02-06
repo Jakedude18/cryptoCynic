@@ -1,0 +1,106 @@
+/* Reset and typography */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-image: url('../images/background.png');
+    background-size: cover;
+}
+
+h1,
+h2 {
+    color: #222;
+}
+
+a {
+    text-decoration: none;
+    color: #222;
+}
+
+a:hover {
+    color: #0077cc;
+}
+
+/* Header */
+.fixed-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #fff;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    box-sizing: border-box;
+    /* include padding in width */
+    z-index: 100;
+}
+
+.fixed-header .logo {
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
+.fixed-header nav a {
+    margin-left: 15px;
+}
+
+/* Footer */
+.fixed-footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #fff;
+    border-top: 1px solid #ccc;
+    text-align: center;
+    padding: 10px 0;
+}
+
+/* Hero Section */
+.hero {
+    padding: 120px 20px 60px 20px;
+    background-size: cover;
+    text-align: center;
+    color: #fff;
+}
+
+.cta-button {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #222;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.cta-button:hover {
+    background-color: #555;
+}
+
+/* Main sections */
+main,
+section {
+    padding: 20px;
+    margin-top: 60px;
+}
+
+ul {
+    list-style-type: disc;
+    margin-left: 20px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .fixed-header nav a {
+        display: block;
+        margin: 5px 0;
+    }
+
+    input[type="text"],
+    textarea {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
