@@ -6,173 +6,190 @@
   <title>CryptoCynic - Transaction Tracker</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
-    /* Internal CSS example */
-    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background-color: #222; color: #fff; }
-    tr:hover { background-color: #f5f5f5; }
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0 20px; }
+    header, footer { background-color: #222; color: #fff; padding: 10px; position: sticky; top: 0; display: flex; justify-content: space-between; align-items: center; }
+    footer { position: static; text-align: center; margin-top: 20px; }
+    nav a { color: #fff; margin-left: 15px; text-decoration: none; }
+    nav a:hover { text-decoration: underline; }
+
+    h1, h2 { margin-top: 20px; }
     form { margin-top: 20px; }
     input[type="text"] { padding: 8px; width: 60%; margin-right: 10px; }
     button { padding: 8px 12px; background-color: #222; color: #fff; border: none; cursor: pointer; }
     button:hover { background-color: #555; }
+
+    table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #222; color: #fff; }
+    tr:hover { background-color: #f5f5f5; }
+    a.tx-link { color: #0066cc; text-decoration: none; }
+    a.tx-link:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
 
-  <header class="fixed-header">
-    <div class="logo">CryptoCynic</div>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="transaction.html">View Transactions</a>
-      <a href="about.html">About</a>
-    </nav>
-  </header>
+<header>
+  <div class="logo">CryptoCynic</div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="transaction.html">View Transactions</a>
+    <a href="about.html">About</a>
+  </nav>
+</header>
 
-  <main>
-    <h1>Transaction Tracker</h1>
-    <p>Enter a Bitcoin transaction hash from the list below to see its status in the mempool.</p>
+<main>
+  <h1>Transaction Tracker</h1>
+  <p>Enter a Bitcoin transaction hash below or click one from the recent transactions list.</p>
 
-    <form id="tx-form">
-      <label for="txid">Transaction ID:</label>
-      <input type="text" id="txid" name="txid" placeholder="Enter Transaction Hash" required>
-      <button type="submit">Track Transaction</button>
-    </form>
+  <form id="tx-form">
+    <label for="txid">Transaction ID:</label>
+    <input type="text" id="txid" name="txid" placeholder="Enter Transaction Hash" required>
+    <button type="submit">Track Transaction</button>
+  </form>
 
-    <ul id="mempool-list"></ul>
+  <!-- Recent Transactions -->
+  <h2>Recent Mempool Transactions</h2>
+  <table id="recent-tx-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Transaction ID</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Filled dynamically -->
+    </tbody>
+  </table>
 
-    <!-- Dynamic Table -->
-    <table>
-      <tr><th>Feature</th><th>Value</th></tr>
-      <tr><td>Status</td><td>--</td></tr>
-      <tr><td>Transaction Fee</td><td>--</td></tr>
-      <tr><td>Transaction Size</td><td>--</td></tr>
-      <tr><td>Time in Mempool</td><td>--</td></tr>
-      <tr><td>Approx. Mempool Rank</td><td>--</td></tr>
-      <tr><td>Estimated Confirmation</td><td>--</td></tr>
-      <tr><td>Block Inclusion</td><td>--</td></tr>
-      <tr><td>Number of Confirmations</td><td>--</td></tr>
-    </table>
+  <!-- Transaction Details -->
+  <h2>Transaction Details</h2>
+  <table id="tx-detail-table">
+    <tr><th>Feature</th><th>Value</th></tr>
+    <tr><td>Status</td><td>--</td></tr>
+    <tr><td>Transaction Fee</td><td>--</td></tr>
+    <tr><td>Transaction Size</td><td>--</td></tr>
+    <tr><td>Time in Mempool</td><td>--</td></tr>
+    <tr><td>Approx. Mempool Rank</td><td>--</td></tr>
+    <tr><td>Estimated Confirmation</td><td>--</td></tr>
+    <tr><td>Block Inclusion</td><td>--</td></tr>
+    <tr><td>Number of Confirmations</td><td>--</td></tr>
+  </table>
+</main>
 
-  </main>
+<footer>
+  <p>&copy; 2026 CryptoCynic | <a href="about.html" style="color: #fff;">About</a></p>
+</footer>
 
-  <footer class="fixed-footer">
-    <p>&copy; 2026 CryptoCynic | <a href="about.html">About</a></p>
-  </footer>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('tx-form');
+    const txDetailTable = document.getElementById('tx-detail-table');
+    const recentTxTableBody = document.getElementById('recent-tx-table').querySelector('tbody');
 
-  <script>
-  document.addEventListener('DOMContentLoaded', () => {
-      const form = document.getElementById('tx-form');
-      const txTable = document.querySelector('table');
-      const mempoolList = document.getElementById('mempool-list');
+    // -----------------------------
+    // Load details for one transaction
+    // -----------------------------
+    async function loadTransaction(txid) {
+        try {
+            const res = await fetch(`http://127.0.0.1:8000/mempool/${txid}`);
+            const data = await res.json();
 
-      if (!form || !txTable || !mempoolList) return;
+            if (data.error) {
+                alert("Transaction not found in mempool.");
+                return;
+            }
 
-      // -----------------------------
-      // Function: Load transaction
-      // -----------------------------
-      async function loadTransaction(txid) {
-          try {
-              const res = await fetch(`http://127.0.0.1:8000/mempool/${txid}`);
-              const data = await res.json();
+            const txData = {
+                status: "Unconfirmed",
+                fee: data.fee_sats + " sats",
+                size: data.vsize + " vB",
+                timeInMempool: data.time_in_mempool + " mins",
+                mempoolRank: data.feerate + " sats/vB",
+                estimatedConfirmation: "Calculating...",
+                blockInclusion: "Pending",
+                confirmations: "0"
+            };
 
-              if (data.error) {
-                  alert("Transaction not found in mempool.");
-                  return;
-              }
+            const tableMap = [
+                'status', 'fee', 'size', 'timeInMempool',
+                'mempoolRank', 'estimatedConfirmation', 'blockInclusion', 'confirmations'
+            ];
 
-              const txData = {
-                  status: "Unconfirmed",
-                  fee: data.fee_sats + " sats",
-                  size: data.vsize + " vB",
-                  timeInMempool: data.time_in_mempool + " mins",
-                  mempoolRank: data.feerate + " sats/vB",
-                  estimatedConfirmation: "Calculating...",
-                  blockInclusion: "Pending",
-                  confirmations: "0"
-              };
+            tableMap.forEach((field, i) => {
+                txDetailTable.rows[i+1].cells[1].innerText = txData[field];
+            });
 
-              const tableMap = [
-                  'status',
-                  'fee',
-                  'size',
-                  'timeInMempool',
-                  'mempoolRank',
-                  'estimatedConfirmation',
-                  'blockInclusion',
-                  'confirmations'
-              ];
+        } catch (err) {
+            console.error(err);
+            alert("Failed to fetch transaction.");
+        }
+    }
 
-              tableMap.forEach((field, i) => {
-                  txTable.rows[i+1].cells[1].innerText = txData[field];
-              });
+    // -----------------------------
+    // Refresh recent transactions
+    // -----------------------------
+    async function refreshRecent(limit = 25) {
+        try {
+            const res = await fetch(`http://127.0.0.1:8000/mempool?limit=${limit}`);
+            const data = await res.json();
 
-          } catch (err) {
-              console.error(err);
-              alert("Failed to fetch transaction.");
-          }
-      }
+            recentTxTableBody.innerHTML = "";
 
-      // -----------------------------
-      // Function: Refresh mempool list
-      // -----------------------------
-      async function refreshMempool(limit = 25) {
-          try {
-              const res = await fetch(`http://127.0.0.1:8000/mempool?limit=${limit}`);
-              const data = await res.json();
+            data.txids.forEach((txid, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td><a href="#" class="tx-link" data-txid="${txid}">${txid.slice(0,12)}...</a></td>
+                `;
+                recentTxTableBody.appendChild(row);
+            });
 
-              mempoolList.innerHTML = "";
+        } catch (err) {
+            console.error("Failed to fetch recent transactions:", err);
+        }
+    }
 
-              data.txids.forEach(txid => {
-                  const li = document.createElement("li");
-                  li.innerHTML = `<a href="#" data-txid="${txid}">${txid.slice(0,12)}...</a>`;
-                  mempoolList.appendChild(li);
-              });
-          } catch (err) {
-              console.error("Failed to fetch mempool:", err);
-          }
-      }
+    // -----------------------------
+    // Handle form submission
+    // -----------------------------
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const txid = document.getElementById('txid').value.trim();
+        if (!txid) return alert("Please enter a transaction ID.");
 
-      // -----------------------------
-      // Handle form submission
-      // -----------------------------
-      form.addEventListener('submit', (e) => {
-          e.preventDefault();
-          const txid = document.getElementById('txid').value.trim();
-          if (!txid) return alert("Please enter a transaction ID.");
+        // Clear old table values
+        for (let i = 1; i < txDetailTable.rows.length; i++) {
+            txDetailTable.rows[i].cells[1].innerText = '--';
+        }
 
-          // Clear old table values
-          for (let i = 1; i < txTable.rows.length; i++) {
-              txTable.rows[i].cells[1].innerText = '--';
-          }
+        loadTransaction(txid);
+    });
 
-          loadTransaction(txid);
-      });
+    // -----------------------------
+    // Handle clicks on recent transactions
+    // -----------------------------
+    recentTxTableBody.addEventListener('click', (e) => {
+        if (e.target.dataset.txid) {
+            e.preventDefault();
+            const txid = e.target.dataset.txid;
+            document.getElementById('txid').value = txid;
 
-      // -----------------------------
-      // Handle clicks on mempool list
-      // -----------------------------
-      mempoolList.addEventListener('click', (e) => {
-          if (e.target.dataset.txid) {
-              e.preventDefault();
-              const txid = e.target.dataset.txid;
-              document.getElementById('txid').value = txid;
+            // Clear old table values
+            for (let i = 1; i < txDetailTable.rows.length; i++) {
+                txDetailTable.rows[i].cells[1].innerText = '--';
+            }
 
-              // Clear old table values
-              for (let i = 1; i < txTable.rows.length; i++) {
-                  txTable.rows[i].cells[1].innerText = '--';
-              }
+            loadTransaction(txid);
+        }
+    });
 
-              loadTransaction(txid);
-          }
-      });
-
-      // -----------------------------
-      // Initial mempool load + auto-refresh
-      // -----------------------------
-      refreshMempool();
-      setInterval(refreshMempool, 10000); // refresh every 10 seconds
-  });
-  </script>
+    // -----------------------------
+    // Initial load + auto-refresh
+    // -----------------------------
+    refreshRecent();
+    setInterval(refreshRecent, 10000); // refresh every 10 seconds
+});
+</script>
 
 </body>
 </html>
