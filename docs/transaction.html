@@ -17,6 +17,15 @@
   </nav>
 </header>
 
+<style>
+/* table styling */ 
+table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+th { background-color: #222; color: #ffffff; }
+tr:hover { background-color: #222; }
+</style>
+
+
 <main>
   <h1>Transaction Tracker</h1>
   <p>Enter a Bitcoin transaction hash below or click one from the recent transactions list.</p>
@@ -32,7 +41,7 @@
   <table id="recent-tx-table">
     <thead>
       <tr>
-        <th>#</th>
+        <th> 9feabfad00ff8cfa4b46498b1b19ec0cc47ed6ec9b1dbaa453ec8f802bcc408a</th>
         <th>Transaction ID</th>
       </tr>
     </thead>
@@ -45,14 +54,10 @@
   <h2>Transaction Details</h2>
   <table id="tx-detail-table">
     <tr><th>Feature</th><th>Value</th></tr>
-    <tr><td>Status</td><td>--</td></tr>
-    <tr><td>Transaction Fee</td><td>--</td></tr>
-    <tr><td>Transaction Size</td><td>--</td></tr>
-    <tr><td>Time in Mempool</td><td>--</td></tr>
-    <tr><td>Approx. Mempool Rank</td><td>--</td></tr>
-    <tr><td>Estimated Confirmation</td><td>--</td></tr>
-    <tr><td>Block Inclusion</td><td>--</td></tr>
-    <tr><td>Number of Confirmations</td><td>--</td></tr>
+    <tr><td>Transaction Fee</td><td> 97,305 sats = $68.69</td></tr>
+    <tr><td>Transaction Size</td><td> 69.71 kB</td></tr>
+    <tr><td>Time in Mempool</td><td> 1 minute </td></tr>
+    <tr><td>Estimated Confirmation</td><td> ~8 minutes</td></tr>
   </table>
 </main>
 
@@ -60,7 +65,7 @@
   <p>&copy; 2026 CryptoCynic | <a href="about.html" style="color: #fff;">About</a></p>
 </footer>
 
-<!-- Link to external JS -->
-<script src="script.js"></script>
+<!-- Link to external JS to add api capabilites -->
+<script src="js/script.js"></script>
 </body>
 </html>
